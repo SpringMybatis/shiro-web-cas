@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bis.shiro.user.sqlMapper">
+	<!-- 结果封装  -->
+	<resultMap type="com.ibs.shiro.web.model.User" id="userResultMap"></resultMap>
+	
+	<!-- 插入用户-角色的关系  -->
+	<insert id="addRelationRoles" parameterType="hashMap">
+		insert into sys_users_roles(user_id,role_id) values(#{userId},#{roleId});
+	</insert>
+	
+	<!-- 添加用户  -->
+	<insert id="addUser" parameterType="com.ibs.shiro.web.model.User">
+		insert into sys_users(username,password,salt,locked) values(#{userName},#{passWord},#{md5Salt},#{locked})
+	</insert>
+	
+	<!-- 修改密码  -->
+	<update id="changePassword" parameterType="hashMap">
+		update sys_users t set t.password = #{newPassword} where t.id = #{userId}
+	</update>
+	
+	<!-- 删除用户-角色的关系 -->
+	<delete id="deleteRelationRoles" parameterType="hashMap">
+		delete sys_users_roles t where t.user_id = #{userId} and t.role_id=#{roleId}
+	</delete>
+	
+	<!-- 查找用户 -->
+	<select id="findByuserName" parameterType="String" resultMap="userResultMap">
+		select id userId,username userName,password passWord,salt md5Salt,locked FROM sys_users where username = #{userName} 
+	</select>
+	
+	<!-- 查询用户对应的权限 -->
+	<select id="findPermissions" parameterType="String" resultType="String">
+		select DISTINCT(p.permission) 
+		FROM sys_users u,
+		     sys_users_roles ur,
+		     sys_roles r,
+		     sys_roles_permissions rp,
+		     sys_permissions p
+		where u.id =ur.user_id
+		and ur.role_id = r.id
+		and r.id = rp.role_id
+		and rp.permission_id = p.id
+		and u.username = #{userName}
+	</select>
+	
+	<!-- 查询用户对应的角色 -->
+	<select id="findRoles" parameterType="String" resultType="String">
+		select DISTINCT(r.role) 
+		FROM sys_users u,
+		     sys_users_roles ur,
+		     sys_roles r
+		where u.id =ur.user_id
+		and ur.role_id = r.id
+		and u.username = #{userName}
+	</select>
+	
+</mapper>

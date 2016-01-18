@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<!-- 扫描com.ibs.shiro.web.dao包下所有标注@Repository的DAO组件 -->
+	<context:component-scan base-package="com.ibs.shiro.web.dao" />
+
+	<!-- 数据源  -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		init-method="createDataSource" destroy-method="close">
+		<property name="driverClassName" value="${app.driver.classname}" />
+		<property name="url" value="${app.database.url}" />
+		<property name="username" value="${app.database.username}" />
+		<property name="password" value="${app.database.password}" />
+		<property name="initialSize" value="${sys.ds.initialSize}" />
+		<property name="maxActive" value="${sys.ds.maxActive}" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+
+	<!-- 配置SqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis-config.xml" />
+		<property name="mapperLocations">
+			<list>
+				<!-- sqlmap以下所有目录中，以mapper.xml结尾所有文件 -->
+				<value>classpath*:sqlmap/**/*mapper.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- sqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+		<!--- 如果想要进行批量操作可加入这个属性 -->
+		<constructor-arg index="1" value="BATCH" />
+	</bean>
+
+</beans>

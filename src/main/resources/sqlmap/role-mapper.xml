@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bis.shiro.role.sqlMapper">
+	<!-- 结果封装  -->
+	<resultMap type="com.ibs.shiro.web.model.Role" id="roleResultMap"></resultMap>
+	
+	<!-- 添加角色和用户的关系  -->
+	<insert id="addRelationPermissions" parameterType="hashMap">
+		insert into sys_roles_permissions(role_id,permission_id) values (#{roleId},#{perssionId})
+	</insert>
+	
+	<!-- 添加角色  -->
+	<insert id="addRole" parameterType="com.ibs.shiro.web.model.Role">
+		insert into sys_roles(role,description,available)values (#{roleName},#{roleDesc},#{locked})
+	</insert>
+	
+	<!-- 删除角色和用户的关系  -->
+	<delete id="deleteRelationPermissions" parameterType="hashMap">
+		delete sys_roles_permissions t where t.role_id = #{roleId} and t.permission_id =#{perssionId}
+	</delete>
+	
+	<!-- 删除角色  -->
+	<delete id="deleteRole" parameterType="int">
+		delete sys_roles t where t.id = #{roleId}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bis.shiro.perssion.sqlMapper">
+	<!-- 结果封装  -->
+	<resultMap type="com.ibs.shiro.web.model.Permission" id="permissionResultMap"></resultMap>
+	
+	<!-- 删除权限 -->
+	<delete id="deletePermission" parameterType="int">
+		delete sys_permissions t where t.id = #{permissionId}
+	</delete>
+	
+	<!-- 插入权限 -->
+	<insert id="insertPermission" parameterType="com.ibs.shiro.web.model.Permission">
+		insert into sys_permissions(permission,description,available) values (#{permissionName},#{permissionDesc},#{locked})	
+	</insert>
+	
+</mapper>
